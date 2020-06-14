@@ -10,6 +10,7 @@ import base64
 import datetime
 import ipaddress
 import json
+import sys
 
 import six
 import boto
@@ -866,7 +867,10 @@ def test_user_data_with_run_instance():
     instance_attribute = instance.get_attribute("userData")
     instance_attribute.should.be.a(InstanceAttribute)
     retrieved_user_data = instance_attribute.get("userData").encode("utf-8")
-    decoded_user_data = base64.decodestring(retrieved_user_data)
+    if sys.version_info[0] == 2:
+        decoded_user_data = base64.decodestring(retrieved_user_data)
+    else:
+        decoded_user_data = base64.decodebytes(retrieved_user_data)
     decoded_user_data.should.equal(b"some user data")
 
 
